@@ -10,8 +10,8 @@ This part has two steps:
    two column sets: with and without the 339 anonymous `V` columns. And **GraphSAGE** (Hamilton et al.,
    2017) on the team's shared entity graph, with the real links and with randomly shuffled links as a
    control. Three seeds each (42, 1, 2).
-2. **Next: fusion.** The FT-Transformer combined with each of the team's four graph models: GraphSAGE,
-   R-GCN, HAN and GAT (see [Fusion](#fusion-next-step)).
+2. **In progress: fusion.** The FT-Transformer combined with each of the team's four graph models. R-GCN and
+   HAN are done; GraphSAGE and GAT come next (see [Fusion](#fusion)).
 
 ## Results
 
@@ -72,10 +72,12 @@ decision, checked against the team plan, is in [`reports/plan.md`](reports/plan.
 ├── runs.py                 every training run by name (start here to read the code)
 ├── models.py               the FT-Transformer and GraphSAGE, one fit() and one predict()
 ├── common.py               loading the shared files, preprocessing, scoring, saving results
-├── report.py               the tables and graphs of 01_results.ipynb
-├── fusion.py               the team's shared fusion script, used unchanged (next step)
+├── report.py               the tables and graphs of 01_results.ipynb and 02_fusion.ipynb
+├── fusion.py               the team's shared fusion script, used unchanged
+├── run_fusion.py           runs fusion.py for one graph model and saves its results (python run_fusion.py rgcn)
 ├── 00_train_runs.ipynb     Colab notebook that ran the 12 runs (with its output)
-├── 01_results.ipynb        every table and graph of the results (with its output)
+├── 01_results.ipynb        every table and graph of the 12 runs (with its output)
+├── 02_fusion.ipynb         every table and graph of the fusion, and a re-run that proves it (with its output)
 ├── reports/
 │   ├── method.md           the method paragraphs for the paper
 │   ├── plan.md             settings, decisions and the check against the team plan
@@ -84,7 +86,7 @@ decision, checked against the team plan, is in [`reports/plan.md`](reports/plan.
 │   ├── graph_vs_V/         runs.csv, each run's history and training log, checkpoints/ (trained models)
 │   ├── figures/            the graphs
 │   ├── from_teammates/     R-GCN, HAN and GAT score files (in Drive only, see below)
-│   └── fusion/             fusion results (next step)
+│   └── fusion/             fusion.py's result tables per graph model, and a record of their inputs
 ├── data/README.md          where the data comes from (not included)
 └── references/README.md    papers to cite
 ```
@@ -115,26 +117,49 @@ The trained models are in `results/graph_vs_V/checkpoints/<run>.pt`. Each is a P
 `models.FTTransformer` or `models.GraphSAGE`, built as in `runs.py`. GraphSAGE also needs the shared graph
 file.
 
-## Fusion (next step)
+## Fusion
 
-The FT-Transformer will be combined with each graph model of the team, using the team's shared
+The FT-Transformer is combined with each graph model of the team, using the team's shared
 [`fusion.py`](fusion.py) unchanged, so that every graph model is fused the same way:
 
 - score = z(FT-Transformer) + alpha × z(graph), each model standardised on its own validation scores;
 - alpha from 0 to 1 in steps of 0.025, chosen on validation PR-AUC (alpha = 0 is the FT-Transformer alone);
+- seeds are paired (FT seed 42 with graph seed 42, and so on), and the same is done with the graph model
+  trained on shuffled links;
 - the test set is scored once, with 2,000 paired bootstrap resamples. A graph counts as helping only if
-  (1) the 95% interval of the gain is above 0, (2) the gain is larger than the spread between seeds, and
-  (3) the real graph beats the shuffled graph.
+  (1) the 95% interval of the gain is above 0, (2) the gain is larger than the spread between the
+  FT-Transformer's seeds, and (3) the real links beat the shuffled links.
 
-| Graph model | Scores | Fusion with the FT-Transformer |
-|---|---|---|
-| GraphSAGE | this repository | to do |
-| R-GCN | from a teammate, received | to do |
-| HAN | from a teammate, received | to do |
-| GAT | from a teammate, coming | to do |
+[`run_fusion.py`](run_fusion.py) runs `fusion.py` for one graph model (it needs all 24 score files in one
+folder), checks that its FT-Transformer-alone scores equal `runs.csv`, and saves its tables to
+[`results/fusion/`](results/fusion/) with the SHA-256 of every input. [`02_fusion.ipynb`](02_fusion.ipynb)
+shows every metric (per seed: alpha, validation, test, graph alone, shuffled links, review budget) and runs
+the fusion again to show that it gives the same results.
 
-The results will go to [`results/fusion/`](results/fusion/). The teammates' score files are not published
-here, because they contain the Kaggle labels.
+**Results so far** (test set, mean of 3 seeds; gain = fused minus the FT-Transformer alone, with its 95%
+interval):
+
+| Graph model | FT-Transformer on | Test PR-AUC: alone -> fused | Gain | Graph helps? | Test ROC-AUC: alone -> fused | Gain | Graph helps? |
+|---|---|---|---|---|---|---|---|
+| R-GCN | set A (with V) | 0.403 -> 0.415 | +0.0115 (+0.0086 to +0.0144) | no (checks 2, 3 fail) | 0.853 -> 0.865 | +0.0124 (+0.0100 to +0.0148) | **yes** |
+| R-GCN | set B (no V) | 0.214 -> 0.216 | +0.0018 (-0.0012 to +0.0048) | no (checks 1, 2, 3 fail) | 0.757 -> 0.787 | +0.0305 (+0.0258 to +0.0353) | **yes** |
+| HAN | set A (with V) | 0.403 -> 0.416 | +0.0125 (+0.0100 to +0.0152) | no (check 2 fails) | 0.853 -> 0.864 | +0.0113 (+0.0094 to +0.0132) | **yes** |
+| HAN | set B (no V) | 0.214 -> 0.217 | +0.0028 (+0.0003 to +0.0055) | no (checks 2, 3 fail) | 0.757 -> 0.788 | +0.0311 (+0.0272 to +0.0351) | **yes** |
+| GraphSAGE | | to do | | | | | |
+| GAT | | coming | | | | | |
+
+- **ROC-AUC (ranking all payments): both graph models help**, with and without the V columns, and pass all
+  three checks. Their real links beat the shuffled ones, but by much less than the total gain (for R-GCN
+  on set B: +0.002 of +0.031). So most of the gain comes from what the graph model learned about each
+  card, address, e-mail and device, not from the links between them.
+- **PR-AUC (the main metric, because fraud is rare): neither helps by the team's rules.** With the V columns
+  the gain is real (about +0.012, interval above 0), but smaller than the spread between the
+  FT-Transformer's own seeds (0.020). HAN's links do beat its shuffled links on PR-AUC (+0.003, interval
+  +0.002 to +0.004), the only case so far. Without the V columns the PR-AUC gain is close to 0.
+
+The teammates' score files are not published here, because they contain the Kaggle labels.
+
+![Fusion: gain over the FT-Transformer alone and real minus shuffled links, with 95% intervals](results/figures/fusion.png)
 
 ## Data and licences
 

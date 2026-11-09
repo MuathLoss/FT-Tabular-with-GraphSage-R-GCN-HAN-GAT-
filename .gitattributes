@@ -3,3 +3,5 @@
 * text=auto eol=lf
 *.pt binary
 *.png binary
+# fusion.py's tables are kept byte for byte as it wrote them: their SHA-256 is in fusion_<graph>_ft_inputs.json
+results/fusion/*.csv -text

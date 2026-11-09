@@ -93,6 +93,7 @@ evaluation.
 | D9 | 2026-11-09 | **Run names:** the GraphSAGE runs are `sage_seed<N>` and `sage_shuf_seed<N>`, following style guide section 10 and the plan's `<model>_seed<N>` pattern. |
 | D10 | 2026-11-09 | **Folder tidy after training:** `colab.ipynb` renamed `00_train_runs.ipynb`; `01_results.ipynb` no longer writes a `__pycache__` folder; plain-language guides in `README.md` and `results/README.md`. The run files stay in `results/graph_vs_V/` under their team names, because the code, the results notebook and the team's fusion find them there (style guide section 2: copy, don't move). |
 | D11 | 2026-11-09 | **Public GitHub repository** (`MuathLoss/FT-Tabular-with-GraphSage-R-GCN-HAN-GAT-`, MIT licence for the code). Kaggle's IEEE-CIS rules allow the data for non-commercial use only (including academic research and education) and forbid redistributing it, so the split file, the graph files and every score file (TransactionID + isFraud) stay out; trained models, histories, logs, figures and reports are published for non-commercial research and education. The team plan PDF, the code style guide and the reference paper PDF are not published (cited in `references/README.md`). The team's `fusion.py` is included unchanged, with the team's agreement. |
+| D12 | 2026-11-09 | **Fusion runs through `run_fusion.py`**, because `fusion.py` (which must stay unchanged) reads every score file from one folder and writes its tables there, while our files are split between `results/graph_vs_V/` and `results/from_teammates/`. It copies the 24 needed files into a temporary folder, runs `fusion.py`, checks that its FT-Transformer-alone test scores equal `runs.csv`, and saves both tables plus the SHA-256 of every input to `results/fusion/` (write-once). Run on the PC (CPU, about 3 minutes per graph model); `02_fusion.ipynb` shows the results and re-runs the fusion to prove they come out the same. |
 
 ## Notes for the team
 
@@ -120,6 +121,7 @@ These came out of reviewing the plan; none of them changes a team setting.
 4. Write the method paragraph for the FT-Transformer and GraphSAGE (`reports/method.md`). Done.
 5. Run `01_results.ipynb` for the graphs, then hand in to Reset: the 24 score files, the 12 history files,
    `runs.csv` and `reports/method.md`.
-6. Fusion: the FT-Transformer with GraphSAGE, R-GCN, HAN and GAT, using the team's `fusion.py` unchanged;
-   results in `results/fusion/`. R-GCN and HAN scores received and checked (`results/from_teammates/`);
-   GAT still to come.
+6. Fusion: the FT-Transformer with GraphSAGE, R-GCN, HAN and GAT, using the team's `fusion.py` unchanged
+   (`python run_fusion.py <graph>`); results in `results/fusion/`, shown and re-checked in `02_fusion.ipynb`.
+   R-GCN and HAN done on 2026-11-09 (scores received and checked in `results/from_teammates/`). GraphSAGE
+   next; GAT when its scores arrive.

@@ -1,7 +1,7 @@
 # Results: what is in this folder
 
 Everything the 12 training runs produced (9 November 2026, Colab A100), the teammates' graph models'
-scores, and (next) the fusion results. Nothing in here is edited by hand. Do not rename or move these
+scores, and the fusion results. Nothing in here is edited by hand. Do not rename or move these
 files: the code, the results notebook and the fusion script find them by these names.
 
 ```
@@ -17,7 +17,7 @@ results/
 ├── figures/         <- the graphs as pictures, saved by 01_results.ipynb
 ├── from_teammates/  <- R-GCN, HAN and GAT score files, as the teammates sent them (see its README)
 │   ├── rgcn/  han/  gat/
-└── fusion/          <- next step: the FT-Transformer fused with each graph model (see its README)
+└── fusion/          <- the FT-Transformer fused with each graph model: fusion.py's tables (see its README)
 ```
 
 The `.parquet` files are tables with three columns: TransactionID, isFraud (1 = fraud) and score. They open

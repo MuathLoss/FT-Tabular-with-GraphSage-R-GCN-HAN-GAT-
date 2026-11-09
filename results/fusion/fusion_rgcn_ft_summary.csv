@@ -1,0 +1,5 @@
+tabular,column_set,graph,metric,seeds,all_seeds,alphas,tabular_mean,tabular_min,tabular_max,fused_mean,fused_min,fused_max,graph_alone_mean,gain_mean,gain_lo,gain_hi,check1_interval_above_0,seed_spread_tabular,check2_gain_above_seed_spread,fused_shuf_mean,real_minus_shuf_mean,real_minus_shuf_lo,real_minus_shuf_hi,check3_real_beats_shuf,graph_helps
+ft,A,rgcn,ROC-AUC,42 1 2,True,0.350 0.550 0.450,0.8525,0.84715,0.85634,0.86493,0.86292,0.86744,0.75657,0.01243,0.00996,0.01477,True,0.00919,True,0.86386,0.00108,0.00039,0.00174,True,True
+ft,A,rgcn,PR-AUC,42 1 2,True,0.350 0.550 0.450,0.40322,0.39581,0.41572,0.41469,0.40548,0.42364,0.14537,0.01147,0.00861,0.01441,True,0.01992,False,0.41431,0.00037,-0.00038,0.00114,False,False
+ft,B,rgcn,ROC-AUC,42 1 2,True,1.000 1.000 0.625,0.7569,0.75132,0.76257,0.7874,0.78272,0.79122,0.75657,0.03051,0.02576,0.03531,True,0.01125,True,0.78527,0.00213,0.00093,0.00329,True,True
+ft,B,rgcn,PR-AUC,42 1 2,True,1.000 1.000 0.625,0.21413,0.2021,0.22156,0.21596,0.20299,0.22438,0.14537,0.00183,-0.00119,0.0048,False,0.01946,False,0.21685,-0.0009,-0.00202,9e-05,False,False

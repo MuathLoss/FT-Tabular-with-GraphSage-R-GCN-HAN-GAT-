@@ -1,6 +1,7 @@
-"""Tables and figures of the FT-Transformer teammate's 12 runs, made only from saved files (used by
-01_results.ipynb). Nothing is trained or chosen here: every run's epoch was chosen on validation before its
-test set was scored once. Runs that are not finished yet are simply left out.
+"""Tables and figures of the FT-Transformer teammate's 12 runs and of their fusion with the team's graph
+models, made only from saved files (used by 01_results.ipynb and 02_fusion.ipynb). Nothing is trained or
+chosen here: every run's epoch, and every fusion weight, was chosen on validation before the test set was
+scored once. Runs and fusions that are not finished yet are simply left out.
 
 What it shows                                                                  -> function
   every finished run, with its scores recomputed from its saved predictions   -> run_table()
@@ -11,7 +12,9 @@ What it shows                                                                  -
   share of frauds caught when a team reviews the top 1% / 5% (team plan p. 11)  -> fig_review_budget()
   set A vs set B, and real vs shuffled links: paired test PR-AUC differences
   with 95% intervals from 2,000 paired resamples of test payments (p. 11)       -> comparisons_table(), fig_comparisons()
-The comparisons that involve fusion are Reset's part of the plan and are not made here.
+  fusion with each graph model (fusion.py's tables, saved by run_fusion.py):
+    does the graph help, with the team plan's three checks                     -> fusion_summary_table(), fig_fusion()
+    seed by seed: weight alpha, validation, test, review budget                -> fusion_seed_table()
 """
 import json
 import math
@@ -35,6 +38,10 @@ COMPARISONS = [("Set A minus set B: what V1-V339 add to the FT-Transformer", "ft
 SEEDS = [42, 1, 2]                           # team plan order
 RESAMPLES, BOOTSTRAP_SEED = 2000, 20261109   # team plan p. 11: 2,000 paired resamples
 SHARES = [0.01, 0.05]                        # team plan p. 11: review the top 1% and 5% of payments
+FUSION = ROOT / "results" / "fusion"
+GRAPHS = {"sage": "GraphSAGE", "rgcn": "R-GCN", "han": "HAN", "gat": "GAT"}   # the team's four graph models
+SETS = {"A": "set A (with V)", "B": "set B (no V)"}
+METRICS = {"pr": "PR-AUC", "roc": "ROC-AUC"}  # fusion.py's short names
 plt.rcParams.update({"font.size": 10, "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED,
                      "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False})
 
@@ -42,6 +49,15 @@ plt.rcParams.update({"font.size": 10, "axes.edgecolor": MUTED, "axes.labelcolor"
 def r3(x):
     """Every number is shown with 3 decimals, rounded the same way everywhere."""
     return f"{x:.3f}"
+
+
+def r4(x):
+    """Fusion gains are small, so differences are shown with a sign and 4 decimals."""
+    return f"{x:+.4f}"
+
+
+def tick(ok):
+    return "✓" if ok else "✗"
 
 
 def model_of(run):
@@ -330,3 +346,109 @@ def fig_comparisons(table):
     ax.set_xlabel("Difference in test PR-AUC")
     ax.grid(axis="x", color=GRID)
     return save(fig, "comparisons")
+
+
+def fusion_graphs():
+    """The graph models whose fusion with the FT-Transformer is finished, in the team's order."""
+    return [g for g in GRAPHS if (FUSION / f"fusion_{g}_ft_inputs.json").exists()]
+
+
+def fusion_results(part):
+    """fusion.py's saved tables for every finished graph model, one after the other: part "" is one row per
+    column set, seed and graph (real or shuffled); part "_summary" is one row per column set and metric."""
+    tables = [pd.read_csv(FUSION / f"fusion_{g}_ft{part}.csv").assign(model=g) for g in fusion_graphs()]
+    return pd.concat(tables, ignore_index=True) if tables else pd.DataFrame()
+
+
+def fusion_summary_table():
+    """Does each graph model help on top of the FT-Transformer? One row per graph model, column set and
+    metric, on the test set: the FT-Transformer alone and fused (mean over the seeds, lowest and highest seed
+    in brackets), the gain and real-minus-shuffled with their 95% intervals, the team plan's three checks
+    and the verdict (the graph helps only if all three hold)."""
+    summary, detail = fusion_results("_summary"), fusion_results("")
+    if summary.empty:
+        return "No fusion finished yet."
+    short = {name: m for m, name in METRICS.items()}
+    rows = []
+    for row in summary.itertuples():   # seed values from the detail table: the summary's means are rounded
+        seeds = detail[(detail.graph == row.model) & (detail.column_set == row.column_set)]
+        alone, fused = seeds[f"test_{short[row.metric]}_tabular"], seeds[f"test_{short[row.metric]}_fused"]
+        rows.append({"Graph model": GRAPHS[row.model], "FT-Transformer on": SETS[row.column_set], "Metric": row.metric,
+                     "FT alone": f"{r3(alone.mean())} ({r3(alone.min())}-{r3(alone.max())})",
+                     "Fused": f"{r3(fused.mean())} ({r3(fused.min())}-{r3(fused.max())})",
+                     "Gain": r4(row.gain_mean), "Gain, 95% interval": f"{r4(row.gain_lo)} to {r4(row.gain_hi)}",
+                     "1. Interval above 0": tick(row.check1_interval_above_0),
+                     "2. Gain > seed spread": f"{tick(row.check2_gain_above_seed_spread)} (spread {row.seed_spread_tabular:.4f})",
+                     "Fused, shuffled links": r3(row.fused_shuf_mean), "Real - shuffled": r4(row.real_minus_shuf_mean),
+                     "Real - shuffled, 95% interval": f"{r4(row.real_minus_shuf_lo)} to {r4(row.real_minus_shuf_hi)}",
+                     "3. Real beats shuffled": tick(row.check3_real_beats_shuf),
+                     "Graph helps": "yes" if row.graph_helps else "no", "Alpha (seeds 42, 1, 2)": row.alphas})
+    return pd.DataFrame(rows)
+
+
+def fusion_seed_table():
+    """Seed by seed, for every finished graph model and column set: the weight alpha chosen on validation
+    PR-AUC (with the real and with the shuffled links), validation PR-AUC before and after fusion, test
+    ROC-AUC and PR-AUC of the graph model alone, the FT-Transformer alone, fused, and fused with the shuffled
+    links, and the share of test frauds caught in the top 1% and 5% before and after fusion."""
+    detail = fusion_results("")
+    if detail.empty:
+        return "No fusion finished yet."
+    real = detail[~detail.graph.str.endswith("_shuf")]
+    shuf = detail[detail.graph.str.endswith("_shuf")].set_index(["model", "column_set", "seed"])
+    rows = []
+    for row in real.itertuples():
+        other = shuf.loc[(row.model, row.column_set, row.seed)]
+        cells = {"Graph model": GRAPHS[row.model], "FT-Transformer on": SETS[row.column_set], "Seed": row.seed,
+                 "Alpha": f"{row.alpha:.3f}", "Alpha, shuffled": f"{other.alpha:.3f}",
+                 "Val PR-AUC: FT alone -> fused": f"{r3(row.val_pr_auc_tabular)} -> {r3(row.val_pr_auc_fused)}"}
+        for m, name in METRICS.items():
+            cells.update({f"Test {name}: graph alone": r3(getattr(row, f"test_{m}_graph_alone")),
+                          f"Test {name}: FT alone": r3(getattr(row, f"test_{m}_tabular")),
+                          f"Test {name}: fused": r3(getattr(row, f"test_{m}_fused")),
+                          f"Test {name}: fused, shuffled links": r3(other[f"test_{m}_fused"])})
+        for p in [1, 5]:
+            cells[f"Frauds caught, top {p}%: FT alone -> fused"] = (f"{getattr(row, f'top{p}pct_caught_tabular'):.1%} -> "
+                                                                     f"{getattr(row, f'top{p}pct_caught_fused'):.1%}")
+        rows.append(cells)
+    return pd.DataFrame(rows)
+
+
+def fusion_panel(ax, summary, detail, column_set, m):
+    """One panel of fig_fusion: per graph model, the gain over the FT-Transformer alone (blue) and real minus
+    shuffled links (grey): dots = seeds, bar = mean, line = 95% interval. Right of 0 = the graph helps."""
+    graphs = list(dict.fromkeys(summary.model))
+    for i, graph in enumerate(graphs):
+        s = summary[(summary.model == graph) & (summary.column_set == column_set) & (summary.metric == METRICS[m])].iloc[0]
+        seeds = detail[(detail.graph == graph) & (detail.column_set == column_set)]
+        for offset, key, color in [(-0.15, "gain", COLORS["ft_A"]), (0.15, "real_minus_shuf", COLORS["sage_shuf"])]:
+            low, high, mean = s[f"{key}_lo"], s[f"{key}_hi"], s[f"{key}_mean"]
+            ax.plot([low, high], [i + offset] * 2, color=color, lw=2)
+            ax.plot([mean] * 2, [i + offset - 0.1, i + offset + 0.1], color=color, lw=3)
+            ax.scatter(seeds[f"{m}_{key}"], [i + offset] * len(seeds), s=30, color=color, edgecolor="white", zorder=3)
+            ax.text(max(high, seeds[f"{m}_{key}"].max()), i + offset, f"  {r4(mean)}", va="center", color=INK, fontsize=8)
+    ax.axvline(0, color=MUTED, lw=1)
+    ax.set_yticks(range(len(graphs)), [GRAPHS[g] for g in graphs])
+    ax.set_ylim(len(graphs) - 0.5, -0.5)
+    ax.set_title(f"FT-Transformer {SETS[column_set]}: test {METRICS[m]}", loc="left", color=INK, fontsize=10)
+    ax.grid(axis="x", color=GRID)
+
+
+def fig_fusion():
+    """The fusion results as a picture: one panel per column set (rows) and metric (columns). For each graph
+    model, blue = gain of the fused score over the FT-Transformer alone, grey = fused with the real links
+    minus fused with the shuffled links, each with its 95% interval. A graph helps only if both are right
+    of 0 (and the gain is larger than the seed spread, see the table)."""
+    summary, detail = fusion_results("_summary"), fusion_results("")
+    if summary.empty:
+        return "No fusion finished yet."
+    fig, axes = plt.subplots(2, 2, figsize=(12, 2.6 + 1.6 * summary.model.nunique()), sharey=True, layout="constrained")
+    for i, column_set in enumerate(SETS):
+        for j, m in enumerate(METRICS):
+            fusion_panel(axes[i, j], summary, detail, column_set, m)
+    axes[0, 0].plot([], [], color=COLORS["ft_A"], lw=2, label="gain over the FT-Transformer alone")
+    axes[0, 0].plot([], [], color=COLORS["sage_shuf"], lw=2, label="real minus shuffled links")
+    fig.legend(frameon=False, fontsize=9, loc="outside upper center", ncols=2)   # above the panels, never on data
+    fig.supxlabel("Difference on the test set (dots = seeds, bar = mean of the seeds, line = 95% interval)",
+                  fontsize=9, color=INK)
+    return save(fig, "fusion")
