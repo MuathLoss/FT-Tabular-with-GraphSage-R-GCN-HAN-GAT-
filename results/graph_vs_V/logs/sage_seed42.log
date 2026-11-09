@@ -1,0 +1,14 @@
+[sage_seed42] GraphSAGE on NVIDIA A100-SXM4-80GB
+  epoch  1 | loss 0.4311 | val ROC-AUC 0.7885 | val PR-AUC 0.1819 | 9 s
+  epoch  2 | loss 0.3657 | val ROC-AUC 0.7890 | val PR-AUC 0.1903 | 8 s
+  epoch  3 | loss 0.3493 | val ROC-AUC 0.7803 | val PR-AUC 0.1899 | 8 s
+  epoch  4 | loss 0.3404 | val ROC-AUC 0.7760 | val PR-AUC 0.1945 | 8 s
+  epoch  5 | loss 0.3342 | val ROC-AUC 0.7803 | val PR-AUC 0.2038 | 8 s
+  epoch  6 | loss 0.3323 | val ROC-AUC 0.7768 | val PR-AUC 0.2080 | 8 s
+  epoch  7 | loss 0.3274 | val ROC-AUC 0.7740 | val PR-AUC 0.2088 | 8 s
+  epoch  8 | loss 0.3240 | val ROC-AUC 0.7754 | val PR-AUC 0.2036 | 8 s
+  epoch  9 | loss 0.3237 | val ROC-AUC 0.7773 | val PR-AUC 0.2169 | 8 s
+  epoch 10 | loss 0.3190 | val ROC-AUC 0.7736 | val PR-AUC 0.2175 | 8 s
+  epoch 11 | loss 0.3164 | val ROC-AUC 0.7760 | val PR-AUC 0.2135 | 8 s
+  epoch 12 | loss 0.3131 | val ROC-AUC 0.7778 | val PR-AUC 0.2273 | 8 s
+[sage_seed42] test ROC-AUC 0.7538 | test PR-AUC 0.1406  -> results/graph_vs_V/runs.csv

@@ -1,0 +1,5 @@
+# Same bytes on every computer: each run's history file stores the SHA-256 of common.py, models.py and
+# runs.py, which only matches with Unix line endings.
+* text=auto eol=lf
+*.pt binary
+*.png binary

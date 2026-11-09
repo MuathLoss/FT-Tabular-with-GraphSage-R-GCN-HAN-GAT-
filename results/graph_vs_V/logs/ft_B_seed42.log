@@ -1,0 +1,13 @@
+[ft_B_seed42] FT-Transformer on NVIDIA A100-SXM4-80GB
+  epoch  1 | loss 0.6415 | val ROC-AUC 0.7627 | val PR-AUC 0.2578 | 18 s
+  epoch  2 | loss 0.3834 | val ROC-AUC 0.7548 | val PR-AUC 0.2578 | 17 s
+  epoch  3 | loss 0.3647 | val ROC-AUC 0.7446 | val PR-AUC 0.2517 | 17 s
+  epoch  4 | loss 0.3530 | val ROC-AUC 0.7483 | val PR-AUC 0.2547 | 17 s
+  epoch  5 | loss 0.3418 | val ROC-AUC 0.7474 | val PR-AUC 0.2656 | 17 s
+  epoch  6 | loss 0.3350 | val ROC-AUC 0.7477 | val PR-AUC 0.2692 | 17 s
+  epoch  7 | loss 0.3270 | val ROC-AUC 0.7539 | val PR-AUC 0.2756 | 17 s
+  epoch  8 | loss 0.3185 | val ROC-AUC 0.7475 | val PR-AUC 0.2536 | 17 s
+  epoch  9 | loss 0.3120 | val ROC-AUC 0.7541 | val PR-AUC 0.2612 | 17 s
+  epoch 10 | loss 0.3074 | val ROC-AUC 0.7539 | val PR-AUC 0.2769 | 17 s
+  epoch 11 | loss 0.2998 | val ROC-AUC 0.7356 | val PR-AUC 0.2825 | 17 s
+[ft_B_seed42] test ROC-AUC 0.7568 | test PR-AUC 0.2187  -> results/graph_vs_V/runs.csv

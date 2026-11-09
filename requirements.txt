@@ -1,0 +1,8 @@
+# Packages the code needs, at the versions the 12 runs used on Google Colab (Python 3.13.16, one NVIDIA
+# A100, CUDA 13.0). requirements.lock.txt is the exact local (Windows) environment used for the checks.
+torch==2.14.1
+pandas==2.2.3
+pyarrow==23.0.1
+scikit-learn==1.6.1
+numpy
+matplotlib

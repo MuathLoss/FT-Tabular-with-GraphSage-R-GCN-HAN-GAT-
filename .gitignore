@@ -1,0 +1,16 @@
+.venv/
+.idea/
+__pycache__/
+.ipynb_checkpoints/
+.env
+
+# Kaggle's IEEE-CIS rules forbid redistributing the competition data, so nothing that contains it is
+# published: the team's split and graph files, and every score file (they hold TransactionID and isFraud).
+# Their SHA-256 hashes are in common.py and in each run's history file. See data/README.md.
+data/processed/
+*.parquet
+results/graph_vs_V/progress/
+
+# team documents that are not public (see references/README.md)
+references/*
+!references/README.md
