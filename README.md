@@ -10,8 +10,8 @@ This part has two steps:
    two column sets: with and without the 339 anonymous `V` columns. And **GraphSAGE** (Hamilton et al.,
    2017) on the team's shared entity graph, with the real links and with randomly shuffled links as a
    control. Three seeds each (42, 1, 2).
-2. **In progress: fusion.** The FT-Transformer combined with each of the team's four graph models. R-GCN and
-   HAN are done; GraphSAGE and GAT come next (see [Fusion](#fusion)).
+2. **In progress: fusion.** The FT-Transformer combined with each of the team's four graph models.
+   GraphSAGE, R-GCN and HAN are done; GAT comes when its scores arrive (see [Fusion](#fusion)).
 
 ## Results
 
@@ -141,21 +141,23 @@ interval):
 
 | Graph model | FT-Transformer on | Test PR-AUC: alone -> fused | Gain | Graph helps? | Test ROC-AUC: alone -> fused | Gain | Graph helps? |
 |---|---|---|---|---|---|---|---|
+| GraphSAGE | set A (with V) | 0.403 -> 0.415 | +0.0114 (+0.0087 to +0.0142) | no (check 2 fails) | 0.853 -> 0.864 | +0.0117 (+0.0096 to +0.0137) | **yes** |
+| GraphSAGE | set B (no V) | 0.214 -> 0.215 | +0.0008 (-0.0018 to +0.0034) | no (checks 1, 2, 3 fail) | 0.757 -> 0.786 | +0.0291 (+0.0250 to +0.0332) | **yes** |
 | R-GCN | set A (with V) | 0.403 -> 0.415 | +0.0115 (+0.0086 to +0.0144) | no (checks 2, 3 fail) | 0.853 -> 0.865 | +0.0124 (+0.0100 to +0.0148) | **yes** |
 | R-GCN | set B (no V) | 0.214 -> 0.216 | +0.0018 (-0.0012 to +0.0048) | no (checks 1, 2, 3 fail) | 0.757 -> 0.787 | +0.0305 (+0.0258 to +0.0353) | **yes** |
 | HAN | set A (with V) | 0.403 -> 0.416 | +0.0125 (+0.0100 to +0.0152) | no (check 2 fails) | 0.853 -> 0.864 | +0.0113 (+0.0094 to +0.0132) | **yes** |
 | HAN | set B (no V) | 0.214 -> 0.217 | +0.0028 (+0.0003 to +0.0055) | no (checks 2, 3 fail) | 0.757 -> 0.788 | +0.0311 (+0.0272 to +0.0351) | **yes** |
-| GraphSAGE | | to do | | | | | |
 | GAT | | coming | | | | | |
 
-- **ROC-AUC (ranking all payments): both graph models help**, with and without the V columns, and pass all
-  three checks. Their real links beat the shuffled ones, but by much less than the total gain (for R-GCN
-  on set B: +0.002 of +0.031). So most of the gain comes from what the graph model learned about each
-  card, address, e-mail and device, not from the links between them.
-- **PR-AUC (the main metric, because fraud is rare): neither helps by the team's rules.** With the V columns
-  the gain is real (about +0.012, interval above 0), but smaller than the spread between the
-  FT-Transformer's own seeds (0.020). HAN's links do beat its shuffled links on PR-AUC (+0.003, interval
-  +0.002 to +0.004), the only case so far. Without the V columns the PR-AUC gain is close to 0.
+- **ROC-AUC (ranking all payments): all three graph models help**, with and without the V columns, and pass
+  all three checks. Their real links beat the shuffled ones, but by much less than the total gain (for
+  R-GCN on set B: +0.002 of +0.031). So most of the gain comes from what the graph model learned about
+  each card, address, e-mail and device, not from the links between them.
+- **PR-AUC (the main metric, because fraud is rare): none helps by the team's rules.** With the V columns
+  the gain is real and about the same for all three (+0.011 to +0.013, interval above 0), but smaller than
+  the spread between the FT-Transformer's own seeds (0.020). On PR-AUC the real links beat the shuffled
+  ones only for HAN (+0.003) and, barely, GraphSAGE (+0.0005). Without the V columns the PR-AUC gain is
+  close to 0.
 
 The teammates' score files are not published here, because they contain the Kaggle labels.
 

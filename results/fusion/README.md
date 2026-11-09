@@ -1,7 +1,7 @@
 # Fusion results
 
 Our FT-Transformer combined with each graph model of the team: GraphSAGE (ours), R-GCN, HAN and GAT (from
-teammates, in `results/from_teammates/`). **Done: R-GCN and HAN. Next: GraphSAGE, then GAT when it arrives.**
+teammates, in `results/from_teammates/`). **Done: GraphSAGE, R-GCN and HAN. Next: GAT, when it arrives.**
 
 Every file here was made by `run_fusion.py`, which runs the team's shared `fusion.py` (top folder)
 unchanged, so every graph model is fused the same way:
@@ -28,6 +28,8 @@ that the saved tables come out the same.
 
 | Graph model | FT-Transformer on | PR-AUC: alone -> fused (gain) | Helps on PR-AUC? | ROC-AUC: alone -> fused (gain) | Helps on ROC-AUC? |
 |---|---|---|---|---|---|
+| GraphSAGE | set A (with V) | 0.403 -> 0.415 (+0.0114) | no: gain smaller than the seed spread (0.020) | 0.853 -> 0.864 (+0.0117) | yes |
+| GraphSAGE | set B (no V) | 0.214 -> 0.215 (+0.0008) | no: gain interval includes 0 | 0.757 -> 0.786 (+0.0291) | yes |
 | R-GCN | set A (with V) | 0.403 -> 0.415 (+0.0115) | no: gain smaller than the seed spread (0.020); real links not better than shuffled | 0.853 -> 0.865 (+0.0124) | yes |
 | R-GCN | set B (no V) | 0.214 -> 0.216 (+0.0018) | no: gain interval includes 0 | 0.757 -> 0.787 (+0.0305) | yes |
 | HAN | set A (with V) | 0.403 -> 0.416 (+0.0125) | no: gain smaller than the seed spread (0.020) | 0.853 -> 0.864 (+0.0113) | yes |

@@ -123,5 +123,5 @@ These came out of reviewing the plan; none of them changes a team setting.
    `runs.csv` and `reports/method.md`.
 6. Fusion: the FT-Transformer with GraphSAGE, R-GCN, HAN and GAT, using the team's `fusion.py` unchanged
    (`python run_fusion.py <graph>`); results in `results/fusion/`, shown and re-checked in `02_fusion.ipynb`.
-   R-GCN and HAN done on 2026-11-09 (scores received and checked in `results/from_teammates/`). GraphSAGE
-   next; GAT when its scores arrive.
+   R-GCN, HAN and GraphSAGE done on 2026-11-09 (teammates' scores received and checked in
+   `results/from_teammates/`). GAT when its scores arrive.

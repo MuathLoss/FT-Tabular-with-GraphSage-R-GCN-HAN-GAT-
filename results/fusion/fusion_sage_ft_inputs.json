@@ -1,0 +1,35 @@
+{
+  "graph": "sage",
+  "finished": "2026-11-09 22:53",
+  "fusion.py": "a32550a609168d96e5da4b0968cfa5924738226cf3e949d31d7f6dac2e4eec67",
+  "inputs": {
+    "ft_A_seed42_val.parquet": "faf2781b334613eaf2ca297147b62a823354bee12a7fa158960e35cafb3a77bf",
+    "ft_A_seed42_test.parquet": "73d0f6de1ebf49d51b2185a7e048abcdee88c9bf575962e3afa6676397a6bd83",
+    "ft_A_seed1_val.parquet": "5175e8ee485a20da4e1c7e051866e0b9ba83df1a3da7964e5907bac6aa0e4294",
+    "ft_A_seed1_test.parquet": "b9d194c8a970398a826f703c272d2675dc1bf3e8a9c89786bf643199f257f51a",
+    "ft_A_seed2_val.parquet": "b281619fc022dc3bc83012af30a6d5d11354fa596d506ef43286a86a5a8c96bb",
+    "ft_A_seed2_test.parquet": "64e4bd0ea5df2fa83eb572bff8584cc3630e0465055b80a68433b8f7c0f4e483",
+    "ft_B_seed42_val.parquet": "a9a9692aec15c4275fa8b4ccf4bc20bb0d944d751f8d77548d1ba97e732a51b9",
+    "ft_B_seed42_test.parquet": "2034bb36d98c1b81f0fb32e7945c8f7c9cfb2596ca6cd076c166051d88f82951",
+    "ft_B_seed1_val.parquet": "26fbcbf1eee5e77b18f0742cac4e5d42598efb60a2dfaf07d90b8e552448a289",
+    "ft_B_seed1_test.parquet": "f96f2b2c7330367c9ab1b013a4d81ba679312c5ef5d6080eb1eb66d0035258f3",
+    "ft_B_seed2_val.parquet": "aacc5e267ac1627b6699e5e1e86a29a98e90cc0473f15d9b5452d5a2ed323ddf",
+    "ft_B_seed2_test.parquet": "afa9cacdcc09277c1350cad98f532709e57b37d842e5aa4c825ebf18ac03ddb6",
+    "sage_seed42_val.parquet": "73cfeb783e31b0c801cffe141efbb240ede9794492b08acde61112bec1805671",
+    "sage_seed42_test.parquet": "e7c5989783a8b1249ea23d39c6a8dfb3fe41f75b27e414bae8d594021a6f54ed",
+    "sage_seed1_val.parquet": "38bbe2ce71e4bcb270c1f8919ed8b931efdc2fe3754df73cb15ed2a1bc870098",
+    "sage_seed1_test.parquet": "ca762f6d455d749fd5b8ba3afd023837f609e08b2c104789ea085a415bf23613",
+    "sage_seed2_val.parquet": "3f887d3b3a2422d5daf88ef0774f3233c8970acb1f3577d4271a4088ecdc59f7",
+    "sage_seed2_test.parquet": "fb58c6436253dbcb57e75e31c5b38b1519533401301b857e2b07674514b04165",
+    "sage_shuf_seed42_val.parquet": "7dd8b14c5a7ee0248e6c007df1add8b59af6e348733e68884fc42ecf6c2cb937",
+    "sage_shuf_seed42_test.parquet": "274a4e1a9eb164303a353e9c622c61adc33e4876cbabf8bd6a99087f5ea0dabe",
+    "sage_shuf_seed1_val.parquet": "79511d88444c7b30397e03c3d840a93c695482c4775230eef95ebe3c5789aeaf",
+    "sage_shuf_seed1_test.parquet": "120f1aac6d6d0c4b5bee21b2f6cb24ce16c67a1b38fb7e60c47c654b37a71c00",
+    "sage_shuf_seed2_val.parquet": "ab8ab4e97133b689cb799a90026756de9c035c6646dd60e41de319f31406a84f",
+    "sage_shuf_seed2_test.parquet": "617e11e167147b602d493653153e95f30809bb4922cae671ec777794bae53993"
+  },
+  "outputs": {
+    "fusion_sage_ft.csv": "315fc2201c57fa14e29ace99000e3a6c268a0a6c86db48b2beafae97caf34fe7",
+    "fusion_sage_ft_summary.csv": "9deb3c5a5dbcadbdd82a5ccb851295a0d6011efbe057fcedd5fb0afa5cb1d9a7"
+  }
+}
